@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="./style.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pen</title>
+  </head>
+  <body>
+
+    <script src="./script.js"></script>
+  </body>
+</html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Estrella's First Bee Day Invitation</title>
+  <style>
+    /* Reset & Background Setup */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding:50;
+    }
+    
+    body {
+      width: 100vw;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow: hidden;
+      position: relative;
+      /* Soft pink and yellow pastel tie-dye theme gradient */
+      background: 
+        radial-gradient(circle at 20% 20%, #fff9c4 15%, transparent 50%),
+        radial-gradient(circle at 80% 30%, #fce4ec 5%, transparent 50%),
+        radial-gradient(circle at 40% 70%, #fff59d 5%, transparent 50%),
+        radial-gradient(circle at 80% 80%, #f48fb1 0%, transparent 50%),
+        #ff69b4;
+      background-blend-mode: screen;
+      font-family: Arial, sans-serif;
+    }
+
+    /* Ambient Background Sparkles */
+    .bg-sparkle {
+      position: absolute;
+      width: 12px;
+      height: 12px;
+      background-color: #ffffff;
+      pointer-events: none;
+      z-index: 1;
+      clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
+      opacity: 0.5;
+      animation: twinkle 10s infinite ease-in-out;
+    }
+
+    @keyframes twinkle {
+      0%, 100% { opacity: 0.2; transform: scale(0.8) rotate(0deg); }
+      50% { opacity: 0.7; transform: scale(1.2) rotate(90deg); }
+    }
+
+    /* Container holding the envelope and the hidden card */
+    .container {
+      position: relative;
+      width: 380px;
+      height: 540px;
+      perspective: 1000px;
+      z-index: 5;
+    }
+
+    /* Interactive Envelope Wrapper */
+    .envelope {
+      position: absolute;
+      width: 100%;
+      height: 260px;
+      bottom: 0;
+      background-color: #fce4ec; /* Soft light pink envelope base */
+      border-radius: 0 0 15px 15px;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.12);
+      cursor: pointer;
+      z-index: 10;
+      transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.5s ease;
+      transform-style: preserve-3d;
+    }
+
+    /* Envelope Top Flap */
+    .envelope::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 0;
+      height: 0;
+      border-left: 190px solid transparent;
+      border-right: 190px solid transparent;
+      border-top: 160px solid #f8bbd0; /* Coordinating pink top flap */
+      transform-origin: top;
+      transition: transform 0.5s ease 0.1s;
+      z-index: 6;
+    }
+
+    /* Bee Seal graphic over the opening point */
+    .bee-seal {
+      position: absolute;
+      top: 140px; 
+      left: 56%;
+      transform: translateX(-50%);
+      width: 90px;
+      height: 90px;
+      z-index: 10;
+      pointer-events: none;
+      filter: drop-shadow(0px 3px 5px rgba(0,0,0,0.15));
+      transition: transform 0.4s ease, opacity 0.3s ease;
+    }
+
+    /* Custom CSS Bee Icon Architecture */
+    .css-bee {
+      position: relative;
+      width: 50px;
+      height: 33px;
+      background: linear-gradient(to right, #000 20%, #fdd835 20%, #fdd835 40%, #000 40%, #000 60%, #fdd835 60%, #fdd835 80%, #000 80%);
+      border-radius: 50%;
+    }
+
+    /* Bee Wings */
+    .css-bee::before, .css-bee::after {
+      content: '';
+      position: absolute;
+      background: rgba(224, 242, 241, 0.85);
+      border: 1px solid #b2dfdb;
+      border-radius: 44%;
+      width: 26px;
+      height: 22px;
+    }
+    .css-bee::before { top: -12px; left: 3px; transform: rotate(-15deg); }
+    .css-bee::after { top: -12px; left: 12px; transform: rotate(15deg); }
+
+    /* The Invitation Card (Hidden initially inside) */
+    .card {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      width: calc(100% - 20px);
+      height: calc(100% - 20px);
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 10px 35px rgba(0,0,0,0.15);
+      overflow: hidden;
+      transform: translateY(180px) scale(0.85);
+      opacity: 0;
+      z-index: 2;
+      transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) 0.4s, opacity 0.5s ease 0.4s;
+    }
+
+    .card img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    /* Opened Animation States */
+    .container.open .envelope::before {
+      transform: rotateX(180deg);
+      z-index: 1;
+    }
+
+    .container.open .bee-seal {
+      transform: translateX(-50%) translateY(-140px) scale(0.5);
+      opacity: 0;
+    }
+
+    .container.open .envelope {
+      transform: translateY(120px) rotateX(-15deg);
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .container.open .card {
+      transform: translateY(0) scale(1);
+      opacity: 1;
+      z-index: 10;
+    }
+
+    /* Exploding Particle Element Styles */
+    .particle {
+      position: absolute;
+      pointer-events: none;
+      z-index: 90;
+    }
+
+    /* Diamond Sparkle Layout */
+    .sparkle-particle {
+      width: 14px;
+      height: 14px;
+      clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
+      animation: scatter 3s cubic-bezier(0.1, 0.8, 0.3, 1) forwards;
+    }
+
+    /* Tiny Flying Bee Layout */
+    .bee-particle {
+      width: 20px;
+      height: 16px;
+      background: linear-gradient(to right, #000 25%, #ffeb3b 25%, #ffeb3b 50%, #000 50%, #000 75%, #ffeb3b 75%);
+      border-radius: 50%;
+      animation: beeFly 1.2s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+    }
+    .bee-particle::before {
+      content: '';
+      position: absolute;
+      top: -6px;
+      left: 3px;
+      width: 10px;
+      height: 8px;
+      background: rgba(255,255,255,0.8);
+      border-radius: 50%;
+      box-shadow: 4px 0 rgba(255,255,255,0.8);
+    }
+
+    @keyframes scatter {
+      0% { transform: translate(0, 0) scale(1) rotate(0deg); opacity: 1; }
+      100% { transform: translate(var(--mx), var(--my)) scale(0) rotate(180deg); opacity: 0; }
+    }
+
+    @keyframes beeFly {
+      0% { transform: translate(0, 0) scale(0.5) rotate(0deg); opacity: 1; }
+      50% { opacity: 1; }
+      100% { transform: translate(var(--mx), var(--my)) scale(1.1) rotate(var(--rot)); opacity: 0; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Static white background sparkles container -->
+  <div id="ambientSparkles"></div>
+
+  <div class="container" id="invitationContainer">
+    <!-- Clickable Envelope Cover -->
+    <div class="envelope" id="envelopeCover">
+      <!-- Custom CSS Bee Sticker Seal -->
+      <div class="bee-seal">
+        <div class="css-bee"></div>
+      </div>
+    </div>
+
+    <!-- Hidden Target Invitation Graphic -->
+    <div class="card">
+      <img src="https://i.postimg.cc/wM8h2tcQ/Estrella-first-Bee-Day.png" alt="Estrella's First Bee Day Invitation">
+    </div>
+  </div>
+
+  <script>
+    const container = document.getElementById('invitationContainer');
+    const envelope = document.getElementById('envelopeCover');
+    const ambientContainer = document.getElementById('ambientSparkles');
+
+    // Create persistent white background sparkles
+    function buildAmbientSparkles() {
+      for (let i = 0; i < 35; i++) {
+        const sparkle = document.createElement('div');
+        sparkle.classList.add('bg-sparkle');
+        sparkle.style.left = `${Math.random() * 100}vw`;
+        sparkle.style.top = `${Math.random() * 100}vh`;
+        sparkle.style.animationDelay = `${Math.random() * 3}s`;
+        ambientContainer.appendChild(sparkle);
+      }
+    }
+    buildAmbientSparkles();
+
+    envelope.addEventListener('click', (e) => {
+      triggerOpeningExplosion(e.clientX, e.clientY);
+      container.classList.add('open');
+    });
+
+    function triggerOpeningExplosion(x, y) {
+      // Color options containing pinks and yellow sparkles
+      const sparkleColors = ['#f48fb1', '#f06292', '#ffeb3b', '#fdd835', '#ffffff'];
+      
+      // Spawn Sparkles
+      for (let i = 0; i < 300; i++) {
+        const sparkle = document.createElement('div');
+        sparkle.classList.add('particle', 'sparkle-particle');
+        sparkle.style.backgroundColor = sparkleColors[Math.floor(Math.random() * sparkleColors.length)];
+        sparkle.style.left = `${x}px`;
+        sparkle.style.top = `${y}px`;
+
+        const angle = Math.random() * Math.PI * 2;
+        const distance = Math.random() * 198 + 60;
+        sparkle.style.setProperty('--mx', `${Math.cos(angle) * distance}px`);
+        sparkle.style.setProperty('--my', `${Math.sin(angle) * distance}px`);
+
+        document.body.appendChild(sparkle);
+        sparkle.addEventListener('animationend', () => sparkle.remove());
+      }
+
+      // Spawn Little Flying Bees
+      for (let j = 0; j < 15; j++) {
+        const bee = document.createElement('div');
+        bee.classList.add('particle', 'bee-particle');
+        bee.style.left = `${x}px`;
+        bee.style.top = `${y}px`;
+
+        const angle = Math.random() * Math.PI * 2;
+        const distance = Math.random() * 220 + 80;
+        
+        bee.style.setProperty('--mx', `${Math.cos(angle) * distance}px`);
+        // Add upward float bias to simulation flight path variables
+        bee.style.setProperty('--my', `${Math.sin(angle) * distance - 60}px`);
+        bee.style.setProperty('--rot', `${Math.random() * 40 - 20}deg`);
+
+        document.body.appendChild(bee);
+        bee.addEventListener('animationend', () => bee.remove());
+      }
+    }
+  </script>
+</body>
+</html>
